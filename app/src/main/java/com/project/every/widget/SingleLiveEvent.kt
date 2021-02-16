@@ -1,4 +1,4 @@
-package com.project.every
+package com.project.every.widget
 
 import androidx.annotation.MainThread
 import androidx.lifecycle.LifecycleOwner

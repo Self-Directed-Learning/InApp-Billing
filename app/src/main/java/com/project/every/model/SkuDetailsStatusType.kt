@@ -1,4 +1,4 @@
-package com.project.every
+package com.project.every.model
 
 enum class SkuDetailsStatusType {
     WAITING,

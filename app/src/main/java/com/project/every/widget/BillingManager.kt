@@ -1,8 +1,11 @@
-package com.project.every
+package com.project.every.widget
 
 import android.app.Activity
 import androidx.lifecycle.MutableLiveData
 import com.android.billingclient.api.*
+import com.project.every.model.ConnectStatusType
+import com.project.every.model.PurchaseStatusType
+import com.project.every.model.SkuDetailsStatusType
 
 class BillingManager(val activity: Activity) : PurchasesUpdatedListener {
 

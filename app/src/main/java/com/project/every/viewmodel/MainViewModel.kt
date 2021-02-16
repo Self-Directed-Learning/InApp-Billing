@@ -1,8 +1,9 @@
-package com.project.every
+package com.project.every.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.android.billingclient.api.SkuDetails
+import com.project.every.widget.SingleLiveEvent
 
 class MainViewModel : ViewModel() {
 

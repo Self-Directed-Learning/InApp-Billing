@@ -1,11 +1,13 @@
-package com.project.every
+package com.project.every.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.project.every.widget.BillingManager
+import com.project.every.viewmodel.MainViewModel
+import com.project.every.R
 import com.project.every.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
