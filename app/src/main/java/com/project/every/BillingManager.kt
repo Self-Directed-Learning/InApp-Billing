@@ -1,16 +1,17 @@
 package com.project.every
 
-import android.content.Context
+import android.app.Activity
 import androidx.lifecycle.MutableLiveData
 import com.android.billingclient.api.*
 
-class BillingManager(context: Context) : PurchasesUpdatedListener {
+class BillingManager(val activity: Activity) : PurchasesUpdatedListener {
 
     var connectStatusType = ConnectStatusType.WAITING
     var skuDetailsStatusType = SkuDetailsStatusType.WAITING
+    var purchaseStatusType = PurchaseStatusType.WAITING
 
     val skuDetailsList = MutableLiveData<ArrayList<SkuDetails>>()
-    val billingClient: BillingClient = BillingClient.newBuilder(context)
+    val billingClient: BillingClient = BillingClient.newBuilder(activity)
         .setListener(this)
         .enablePendingPurchases()
         .build()
@@ -36,15 +37,30 @@ class BillingManager(context: Context) : PurchasesUpdatedListener {
         val params = SkuDetailsParams.newBuilder().setSkusList(skuIdList).setType(BillingClient.SkuType.INAPP)
         billingClient.querySkuDetailsAsync(params.build()) { billingResult, skuDetailsList ->
             when {
-                billingResult.responseCode != BillingClient.BillingResponseCode.OK -> skuDetailsStatusType = SkuDetailsStatusType.FAIL
-                skuDetailsList.isNullOrEmpty() -> skuDetailsStatusType = SkuDetailsStatusType.EMPTY
-                else -> {
+                billingResult.responseCode == BillingClient.BillingResponseCode.OK && !skuDetailsList.isNullOrEmpty() -> {
                     skuDetailsStatusType = SkuDetailsStatusType.EXIST
                     this.skuDetailsList.value = skuDetailsList as ArrayList<SkuDetails>?
                 }
+                skuDetailsList.isNullOrEmpty() -> skuDetailsStatusType = SkuDetailsStatusType.EMPTY
+                else -> skuDetailsStatusType = SkuDetailsStatusType.FAIL
             }
         }
     }
 
-    override fun onPurchasesUpdated(billingResult: BillingResult, purchaseList: MutableList<Purchase>?) {}
+    fun purchaseSkuDetails(skuDetails: SkuDetails) {
+        val flowParams = BillingFlowParams.newBuilder()
+            .setSkuDetails(skuDetails)
+            .build()
+
+        val responseCode = billingClient.launchBillingFlow(activity, flowParams).responseCode
+        print(responseCode)
+    }
+
+    override fun onPurchasesUpdated(billingResult: BillingResult, purchaseList: MutableList<Purchase>?) {
+        when {
+            billingResult.responseCode == BillingClient.BillingResponseCode.OK && purchaseList != null -> purchaseStatusType = PurchaseStatusType.SUCCESS
+            billingResult.responseCode == BillingClient.BillingResponseCode.USER_CANCELED -> purchaseStatusType = PurchaseStatusType.CANCEL
+            else -> purchaseStatusType = PurchaseStatusType.FAIL
+        }
+    }
 }
