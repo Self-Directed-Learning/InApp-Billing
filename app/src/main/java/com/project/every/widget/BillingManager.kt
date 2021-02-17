@@ -16,6 +16,8 @@ class BillingManager(val activity: Activity) : PurchasesUpdatedListener, Consume
     var consumeStatusType = ConsumeStatusType.WAITING
 
     val skuDetailsList = MutableLiveData<ArrayList<SkuDetails>>()
+
+
     val billingClient: BillingClient = BillingClient.newBuilder(activity)
         .setListener(this)
         .enablePendingPurchases()
@@ -57,15 +59,14 @@ class BillingManager(val activity: Activity) : PurchasesUpdatedListener, Consume
             .setSkuDetails(skuDetails)
             .build()
 
-        val responseCode = billingClient.launchBillingFlow(activity, flowParams).responseCode
-        print(responseCode)
+        billingClient.launchBillingFlow(activity, flowParams).responseCode
     }
 
     override fun onPurchasesUpdated(billingResult: BillingResult, purchaseList: MutableList<Purchase>?) {
         when {
             billingResult.responseCode == BillingClient.BillingResponseCode.OK && purchaseList != null -> {
                 purchaseStatusType = PurchaseStatusType.SUCCESS
-                val consumeParams = ConsumeParams.newBuilder().setPurchaseToken(purchaseList!![0].purchaseToken).build()
+                val consumeParams = ConsumeParams.newBuilder().setPurchaseToken(purchaseList[0].purchaseToken).build()
                 billingClient.consumeAsync(consumeParams, this)
             }
             billingResult.responseCode == BillingClient.BillingResponseCode.USER_CANCELED -> purchaseStatusType = PurchaseStatusType.CANCEL
