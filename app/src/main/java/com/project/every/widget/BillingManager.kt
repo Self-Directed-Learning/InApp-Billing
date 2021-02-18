@@ -16,8 +16,6 @@ class BillingManager(val activity: Activity) : PurchasesUpdatedListener, Consume
     var consumeStatusType = ConsumeStatusType.WAITING
 
     val skuDetailsList = MutableLiveData<ArrayList<SkuDetails>>()
-
-
     val billingClient: BillingClient = BillingClient.newBuilder(activity)
         .setListener(this)
         .enablePendingPurchases()

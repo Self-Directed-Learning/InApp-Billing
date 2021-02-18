@@ -24,20 +24,17 @@ class MainActivity : AppCompatActivity() {
 
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
-
         billingManager = BillingManager(this)
-        observerViewModel()
-        observerBillingManager()
+
+        observer()
     }
 
-    fun observerViewModel() {
+    fun observer() {
         with(viewModel) {
             onPurchaseEvent.observe(this@MainActivity, Observer {
                 billingManager.purchaseSkuDetails(skuDetailsList[0])
             })
         }
-    }
-    fun observerBillingManager() {
         with(billingManager) {
             skuDetailsList.observe(this@MainActivity, Observer {
                 viewModel.setData(it)
